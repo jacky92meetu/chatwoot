@@ -66,6 +66,10 @@ export function usePolicy() {
     const perms = unref(permissions);
     const installation = unref(installationTypes);
 
+    // [premium-removed] Premium (paid-plan) features are hidden entirely on this
+    // instance: no nav/settings entries and no upsell paywalls, regardless of plan.
+    if (flag && PREMIUM_FEATURES.includes(flag)) return false;
+
     // if the user does not have permissions or installation type is not supported
     // return false;
     // This supersedes everything
@@ -105,24 +109,8 @@ export function usePolicy() {
   };
 
   const shouldShowPaywall = featureFlag => {
-    const flag = unref(featureFlag);
-    if (!flag) return false;
-
-    if (isACustomBrandedInstance.value) {
-      // custom branded instances never show paywall
-      return false;
-    }
-
-    if (isPremiumFeature(flag)) {
-      if (isOnChatwootCloud.value) {
-        return !isFeatureFlagEnabled(flag);
-      }
-
-      if (isEnterprise) {
-        return !hasPremiumEnterprise.value;
-      }
-    }
-
+    // [premium-removed] Paywall / "Upgrade" upsell modals are permanently
+    // disabled on this instance.
     return false;
   };
 

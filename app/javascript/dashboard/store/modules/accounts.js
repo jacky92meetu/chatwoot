@@ -7,6 +7,7 @@ import EnterpriseAccountAPI from '../../api/enterprise/account';
 import WhatsappChannel from '../../api/channel/whatsappChannel';
 import { throwErrorMessage } from '../utils/api';
 import { getLanguageDirection } from 'dashboard/components/widgets/conversation/advancedFilterItems/languages';
+import { PREMIUM_FEATURES } from 'dashboard/featureFlags';
 
 const findRecordById = ($state, id) =>
   $state.records.find(record => record.id === Number(id)) || {};
@@ -50,6 +51,9 @@ export const getters = {
     return diffDays <= TRIAL_PERIOD_DAYS;
   },
   isFeatureEnabledonAccount: $state => (id, featureName) => {
+    // [premium-removed] Premium flags always read as disabled on this instance,
+    // so no direct feature-flag checks (copilot, search, side panel) surface them.
+    if (featureName && PREMIUM_FEATURES.includes(featureName)) return false;
     const { features = {} } = findRecordById($state, id);
     return features[featureName] || false;
   },

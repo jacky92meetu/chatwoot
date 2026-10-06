@@ -90,9 +90,9 @@ const isAccountPaywalled = computed(() => {
 });
 
 const shouldShowUpgradePage = computed(() => {
-  // Skip upgrade page in Billing, Inbox, and Agent pages
-  if (props.bypassUpgradePage) return false;
-  return isAccountPaywalled.value;
+  // [premium-removed] The full-screen upgrade/paywall overlay is disabled on
+  // this instance (it previously only triggered on cloud over-limit accounts).
+  return false;
 });
 
 const fetchLimits = () => {
