@@ -1,8 +1,7 @@
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import SignupForm from './components/Signup/Form.vue';
-import Testimonials from './components/Testimonials/Index.vue';
 import Spinner from 'shared/components/Spinner.vue';
 import signupBg from 'assets/images/auth/signup-bg.jpg';
 
@@ -13,14 +12,6 @@ const globalConfig = computed(() => store.getters['globalConfig/get']);
 const isAChatwootInstance = computed(
   () => globalConfig.value.installationName === 'Chatwoot'
 );
-
-onBeforeMount(() => {
-  isLoading.value = isAChatwootInstance.value;
-});
-
-const resizeContainers = () => {
-  isLoading.value = false;
-};
 </script>
 
 <template>
@@ -70,11 +61,6 @@ const resizeContainers = () => {
           <SignupForm />
         </div>
       </div>
-      <Testimonials
-        v-if="isAChatwootInstance"
-        class="flex-1 hidden xl:flex"
-        @resize-containers="resizeContainers"
-      />
     </div>
     <div
       v-show="isLoading"
