@@ -348,6 +348,9 @@
     "DATA": "Data",
     "PROFILE_SETTINGS": "Profile Settings",
     "ACCOUNT_SETTINGS": "Account Settings",
+    "HUB_CONFIGS": "Hub Configs",
+    "HUB_GLOBAL_VARS": "Hub Global Vars",
+    "SPOKE_CONFIGS": "Spoke Configs",
     "APPLICATIONS": "Applications",
     "LABELS": "Labels",
     "CUSTOM_ATTRIBUTES": "Custom Attributes",
@@ -416,6 +419,87 @@
     "SECURITY": "Security",
     "CAPTAIN_AI": "Captain",
     "CONVERSATION_WORKFLOW": "Conversation Workflow"
+  },
+  "N8N_SETTINGS": {
+    "HUB_CONFIGS": {
+      "TITLE": "Hub Configs",
+      "DESCRIPTION": "Manage the account-specific rules and defaults loaded by the n8n Hub Config workflow.",
+      "SINGULAR": "hub config"
+    },
+    "GLOBAL_VARS": {
+      "TITLE": "Hub Global Vars",
+      "DESCRIPTION": "Manage shared JSON values used by this account's spoke templates.",
+      "SINGULAR": "global variable"
+    },
+    "SPOKE_CONFIGS": {
+      "TITLE": "Spoke Configs",
+      "DESCRIPTION": "Manage account-specific API spokes, templates, parameters, and AI instructions.",
+      "SINGULAR": "spoke config"
+    },
+    "FIELDS": {
+      "NAME": "Name",
+      "CONFIG_TYPE": "Config type",
+      "DESCRIPTION": "Description",
+      "VALUE": "Value",
+      "VALUE_OVERRIDE": "Value override",
+      "DEFAULT_VALUE": "Default value",
+      "EFFECTIVE_VALUE": "Effective value",
+      "SECRET": "Secret",
+      "IS_ACTIVE": "Active",
+      "STATUS": "Status",
+      "PARAMETERS": "Parameters",
+      "API_TEMPLATE": "API template",
+      "RESPONSE_TEMPLATE": "Response template",
+      "OUTPUT_TEMPLATE": "Output template",
+      "AI_DATA_REQUEST_INSTRUCTION": "AI data request instruction",
+      "AI_OUTPUT_INSTRUCTION": "AI output instruction",
+      "ACTIONS": "Actions"
+    },
+    "HINTS": {
+      "OPTIONAL_OBJECT": "Optional JSON object. Leave blank to use the default value.",
+      "REQUIRED_OBJECT": "Enter a valid JSON object.",
+      "OPTIONAL_JSON": "Optional JSON value. Leave blank to store null.",
+      "REQUIRED_JSON": "Enter valid non-null JSON. Strings must be enclosed in double quotes.",
+      "VARIABLE_NAME": "Use letters, numbers, and underscores; the first character must be a letter or underscore.",
+      "SECRET": "Marks this value as sensitive in the list. It does not encrypt the database value."
+    },
+    "FORM": {
+      "ADD_TITLE": "Add {resource}",
+      "EDIT_TITLE": "Edit {resource}",
+      "CANCEL": "Cancel",
+      "CREATE": "Create",
+      "UPDATE": "Update"
+    },
+    "VALIDATION": {
+      "REQUIRED": "This field is required.",
+      "JSON": "Enter valid JSON.",
+      "JSON_OBJECT": "Enter a JSON object.",
+      "NON_NULL_JSON": "The JSON value cannot be null."
+    },
+    "API": {
+      "CREATE_SUCCESS": "Configuration created successfully.",
+      "UPDATE_SUCCESS": "Configuration updated successfully.",
+      "DELETE_SUCCESS": "Configuration deleted successfully.",
+      "ERROR": "Unable to save the configuration."
+    },
+    "DELETE_CONFIRM": {
+      "TITLE": "Delete configuration",
+      "MESSAGE": "Are you sure you want to delete",
+      "YES": "Delete",
+      "NO": "Cancel"
+    },
+    "ADD": "Add {resource}",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "YES": "Yes",
+    "NO": "No",
+    "LOADING": "Loading configurations...",
+    "NO_RECORDS": "No configurations found.",
+    "NO_RESULTS": "No matching configurations found.",
+    "SEARCH": "Search configurations",
+    "COUNT": "{count} records"
   },
   "DATA_IMPORTS": {
     "HEADER": "Data",

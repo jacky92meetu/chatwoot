@@ -10,13 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_31_000000) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_19_091000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "vector"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "hub_config_type", ["intent", "spoke", "flowise", "rag_site", "model", "message", "instruction", "report", "rag_engine", "setting"]
 
   create_table "access_tokens", force: :cascade do |t|
     t.string "owner_type"
@@ -1273,6 +1277,52 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_000000) do
     t.index ["source_id"], name: "index_messages_on_source_id"
   end
 
+  create_table "n8n_hub_configs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.enum "config_type", null: false, enum_type: "hub_config_type"
+    t.string "name", limit: 100, null: false
+    t.jsonb "value"
+    t.jsonb "default_value", null: false
+    t.text "description"
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["account_id", "config_type", "name"], name: "n8n_hub_configs_account_type_name_key", unique: true
+    t.check_constraint "btrim(name::text) <> ''::text", name: "hub_configs_name_not_blank"
+    t.check_constraint "jsonb_typeof(default_value) = 'object'::text", name: "hub_configs_default_value_is_object"
+    t.check_constraint "value IS NULL OR jsonb_typeof(value) = 'object'::text", name: "hub_configs_value_is_object"
+  end
+
+  create_table "n8n_hub_global_vars", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", limit: 100, null: false
+    t.jsonb "value", null: false
+    t.text "description"
+    t.boolean "is_secret", default: false, null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["account_id", "name"], name: "n8n_hub_global_vars_account_name_key", unique: true
+    t.check_constraint "jsonb_typeof(value) IS DISTINCT FROM 'null'::text", name: "hub_global_vars_value_not_null"
+    t.check_constraint "name::text ~ '^[A-Za-z_][A-Za-z0-9_]*$'::text", name: "hub_global_vars_name_format"
+  end
+
+  create_table "n8n_spoke_configs", id: { type: :string, limit: 36, default: -> { "gen_random_uuid()" } }, force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", limit: 100, null: false
+    t.text "description"
+    t.jsonb "parameters", default: {}, null: false
+    t.text "api_template", null: false
+    t.jsonb "response_template"
+    t.text "output_template"
+    t.text "ai_data_request_instruction"
+    t.text "ai_output_instruction"
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["account_id", "name"], name: "n8n_spoke_configs_account_name_key", unique: true
+  end
+
   create_table "notes", force: :cascade do |t|
     t.text "content", null: false
     t.bigint "account_id", null: false
@@ -1603,7 +1653,35 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_31_000000) do
   add_foreign_key "campaign_recipients", "contacts", on_delete: :cascade
   add_foreign_key "campaign_recipients", "inboxes", on_delete: :cascade
   add_foreign_key "inboxes", "portals"
+  add_foreign_key "n8n_hub_configs", "accounts", on_delete: :cascade
+  add_foreign_key "n8n_hub_global_vars", "accounts", on_delete: :cascade
+  add_foreign_key "n8n_spoke_configs", "accounts", on_delete: :cascade
   add_foreign_key "user_sessions", "users"
+  # no candidate create_trigger statement could be found, creating an adapter-specific one
+  execute(<<-SQL)
+CREATE OR REPLACE FUNCTION public.n8n_clone_hub_configs_for_new_account()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$ BEGIN IF NEW.id <> 1 THEN INSERT INTO n8n_hub_configs (account_id, config_type, name, value, default_value, description, is_active, created_at, updated_at) SELECT NEW.id, config_type, name, value, default_value, description, is_active, now(), now() FROM n8n_hub_configs WHERE account_id = 1 ON CONFLICT (account_id, config_type, name) DO NOTHING; END IF; RETURN NEW; END $function$
+  SQL
+
+  # no candidate create_trigger statement could be found, creating an adapter-specific one
+  execute("CREATE TRIGGER n8n_clone_hub_configs_on_account_insert AFTER INSERT ON \"accounts\" FOR EACH ROW EXECUTE FUNCTION n8n_clone_hub_configs_for_new_account()")
+
+  # no candidate create_trigger statement could be found, creating an adapter-specific one
+  execute(<<-SQL)
+CREATE OR REPLACE FUNCTION public.set_hub_configs_updated_at()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$ BEGIN NEW.updated_at = now(); RETURN NEW; END $function$
+  SQL
+
+  # no candidate create_trigger statement could be found, creating an adapter-specific one
+  execute("CREATE TRIGGER set_hub_configs_updated_at BEFORE UPDATE ON \"n8n_hub_configs\" FOR EACH ROW EXECUTE FUNCTION set_hub_configs_updated_at()")
+
+  # no candidate create_trigger statement could be found, creating an adapter-specific one
+  execute("CREATE TRIGGER set_hub_global_vars_updated_at BEFORE UPDATE ON \"n8n_hub_global_vars\" FOR EACH ROW EXECUTE FUNCTION set_hub_configs_updated_at()")
+
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

@@ -790,6 +790,24 @@ const menuItems = computed(() => {
           icon: 'i-lucide-briefcase',
           to: accountScopedRoute('general_settings_index'),
         },
+        {
+          name: 'Settings Hub Configs',
+          label: t('SIDEBAR.HUB_CONFIGS'),
+          icon: 'i-lucide-sliders-horizontal',
+          to: accountScopedRoute('n8n_hub_configs'),
+        },
+        {
+          name: 'Settings Hub Global Vars',
+          label: t('SIDEBAR.HUB_GLOBAL_VARS'),
+          icon: 'i-lucide-braces',
+          to: accountScopedRoute('n8n_hub_global_vars'),
+        },
+        {
+          name: 'Settings Spoke Configs',
+          label: t('SIDEBAR.SPOKE_CONFIGS'),
+          icon: 'i-lucide-network',
+          to: accountScopedRoute('n8n_spoke_configs'),
+        },
         // {
         //   name: 'Settings Captain',
         //   label: t('SIDEBAR.CAPTAIN_AI'),

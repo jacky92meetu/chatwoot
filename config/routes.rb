@@ -327,6 +327,9 @@ Rails.application.routes.draw do
             end
           end
           resources :labels, only: [:index, :show, :create, :update, :destroy]
+          resources :n8n_hub_configs, only: [:index, :show, :create, :update, :destroy]
+          resources :n8n_hub_global_vars, only: [:index, :show, :create, :update, :destroy]
+          resources :n8n_spoke_configs, only: [:index, :show, :create, :update, :destroy]
 
           resources :notifications, only: [:index, :update, :destroy] do
             collection do

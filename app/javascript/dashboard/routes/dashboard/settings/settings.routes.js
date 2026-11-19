@@ -28,6 +28,7 @@ import security from './security/security.routes';
 import conversationWorkflow from './conversationWorkflow/conversationWorkflow.routes';
 import captain from './captain/captain.routes';
 import data from './data/data.routes';
+import n8nSettings from './n8nSettings/n8nSettings.routes';
 
 export default {
   routes: [
@@ -61,6 +62,7 @@ export default {
     ...templates.routes,
     ...integrations.routes,
     ...data.routes,
+    ...n8nSettings.routes,
     ...labels.routes,
     ...macros.routes,
     ...reports.routes,
