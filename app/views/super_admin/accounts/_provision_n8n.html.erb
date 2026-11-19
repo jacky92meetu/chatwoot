@@ -1,0 +1,9 @@
+<section class="main-content__body">
+ <hr/>
+  <%= form_for([:provision_n8n, namespace, page.resource], method: :post, html: { class: "form" }) do |f| %>
+    <div class="form-actions">
+      <p class="pb-3">Creates this account's n8n routing and attaches the shared global bot to its inboxes. <br>It runs automatically for new accounts and inboxes; use this to repair or backfill.</p>
+      <%= f.submit 'Set Up n8n Hub' %>
+    </div>
+  <% end %>
+</section>

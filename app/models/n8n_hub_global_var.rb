@@ -10,8 +10,16 @@ class N8nHubGlobalVar < ApplicationRecord
             uniqueness: { scope: :account_id }
   validates :is_secret, :is_active, inclusion: { in: [true, false] }
   validate :value_is_not_null
+  validate :url_value_is_public, if: :will_save_change_to_value?
 
   private
+
+  def url_value_is_public
+    return unless value.is_a?(String) && (value.match?(%r{\Ahttps?://}i) || name.to_s.match?(/URL|HOST|ENDPOINT/i))
+    return if value.blank? || N8n::SpokeUrlGuard.allowed?(value, account_id: account_id)
+
+    errors.add(:value, 'targets a blocked address (internal, private or non-http(s) hosts are not allowed)')
+  end
 
   def value_is_not_null
     errors.add(:value, :blank) if value.nil?

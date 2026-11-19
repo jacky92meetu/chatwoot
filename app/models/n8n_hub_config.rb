@@ -10,8 +10,23 @@ class N8nHubConfig < ApplicationRecord
   validates :is_active, inclusion: { in: [true, false] }
   validate :default_value_is_object
   validate :value_is_object
+  validate :rag_site_url_is_public
 
   private
+
+  def rag_site_url_is_public
+    return unless config_type == 'rag_site'
+
+    [default_value, value].each do |config|
+      next unless config.is_a?(Hash)
+
+      url = config['url'].to_s
+      unless N8n::SpokeUrlGuard.allowed?(url, account_id: account_id, use_allowlist: false)
+        errors.add(:base, 'Source URL must be a public http(s) address')
+        break
+      end
+    end
+  end
 
   def default_value_is_object
     errors.add(:default_value, 'must be a JSON object') unless default_value.is_a?(Hash)

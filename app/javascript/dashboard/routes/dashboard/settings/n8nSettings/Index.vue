@@ -14,6 +14,7 @@ import {
   BaseTableRow,
 } from 'dashboard/components-next/table';
 import N8nSettingForm from './N8nSettingForm.vue';
+import RagIndexPanel from './RagIndexPanel.vue';
 import { RESOURCE_CONFIGS, truncateValue } from './resourceConfig';
 
 const route = useRoute();
@@ -179,6 +180,13 @@ onMounted(fetchRecords);
       </BaseSettingsHeader>
     </template>
 
+    <template v-if="resourceConfig.panel === 'rag'" #preBody>
+      <RagIndexPanel
+        :has-sources="records.some(record => record.enabled)"
+        @finished="fetchRecords"
+      />
+    </template>
+
     <template #body>
       <BaseTable
         :headers="tableHeaders"
@@ -241,7 +249,7 @@ onMounted(fetchRecords);
       </BaseTable>
     </template>
 
-    <woot-modal v-model:show="showForm" :on-close="closeForm">
+    <woot-modal v-model:show="showForm" full-width :on-close="closeForm">
       <N8nSettingForm
         :resource-config="resourceConfig"
         :record="selectedRecord"

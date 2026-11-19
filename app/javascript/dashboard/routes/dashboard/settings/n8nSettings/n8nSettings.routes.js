@@ -1,9 +1,18 @@
 import { frontendURL } from '../../../../helper/URLHelper';
+import store from '../../../../store';
 
 import SettingsWrapper from '../SettingsWrapper.vue';
 import Index from './Index.vue';
 
-const buildRoute = ({ path, name, resource }) => ({
+const superAdminOnly = (to, from, next) => {
+  if (store.getters.getCurrentUser?.type === 'SuperAdmin') {
+    next();
+  } else {
+    next({ name: 'general_settings_index', params: to.params });
+  }
+};
+
+const buildRoute = ({ path, name, resource, beforeEnter }) => ({
   path: frontendURL(`accounts/:accountId/settings/${path}`),
   component: SettingsWrapper,
   children: [
@@ -14,6 +23,7 @@ const buildRoute = ({ path, name, resource }) => ({
         permissions: ['administrator'],
         n8nResource: resource,
       },
+      beforeEnter,
       component: Index,
     },
   ],
@@ -25,6 +35,7 @@ export default {
       path: 'hub-configs',
       name: 'n8n_hub_configs',
       resource: 'hubConfigs',
+      beforeEnter: superAdminOnly,
     }),
     buildRoute({
       path: 'hub-global-vars',
@@ -35,6 +46,11 @@ export default {
       path: 'spoke-configs',
       name: 'n8n_spoke_configs',
       resource: 'spokeConfigs',
+    }),
+    buildRoute({
+      path: 'rag',
+      name: 'n8n_rag',
+      resource: 'ragSources',
     }),
   ],
 };

@@ -1,6 +1,12 @@
 class Api::V1::Accounts::N8nHubConfigsController < Api::V1::Accounts::N8nSettingsController
   private
 
+  def check_admin_authorization?
+    raise Pundit::NotAuthorizedError unless Current.user.is_a?(SuperAdmin)
+
+    super
+  end
+
   def settings_model
     N8nHubConfig
   end

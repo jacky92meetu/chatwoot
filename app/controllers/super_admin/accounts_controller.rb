@@ -66,6 +66,14 @@ class SuperAdmin::AccountsController < SuperAdmin::ApplicationController
     # rubocop:enable Rails/I18nLocaleTexts
   end
 
+  def provision_n8n
+    provisioned = N8n::AccountProvisioner.new(requested_resource).perform
+    # rubocop:disable Rails/I18nLocaleTexts
+    notice = provisioned ? 'n8n hub setup completed' : 'n8n hub setup skipped: template account has no n8n_tenant_routes row'
+    redirect_back(fallback_location: [namespace, requested_resource], notice: notice)
+    # rubocop:enable Rails/I18nLocaleTexts
+  end
+
   def destroy
     account = Account.find(params[:id])
 

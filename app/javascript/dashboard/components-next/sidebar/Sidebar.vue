@@ -66,6 +66,8 @@ const isMobile = computed(() => windowWidth.value < 768);
 
 const accountId = useMapGetter('getCurrentAccountId');
 const currentUserId = useMapGetter('getCurrentUserID');
+const currentUser = useMapGetter('getCurrentUser');
+const isSuperAdmin = computed(() => currentUser.value?.type === 'SuperAdmin');
 const isFeatureEnabledonAccount = useMapGetter(
   'accounts/isFeatureEnabledonAccount'
 );
@@ -790,12 +792,16 @@ const menuItems = computed(() => {
           icon: 'i-lucide-briefcase',
           to: accountScopedRoute('general_settings_index'),
         },
-        {
-          name: 'Settings Hub Configs',
-          label: t('SIDEBAR.HUB_CONFIGS'),
-          icon: 'i-lucide-sliders-horizontal',
-          to: accountScopedRoute('n8n_hub_configs'),
-        },
+        ...(isSuperAdmin.value
+          ? [
+              {
+                name: 'Settings Hub Configs',
+                label: t('SIDEBAR.HUB_CONFIGS'),
+                icon: 'i-lucide-sliders-horizontal',
+                to: accountScopedRoute('n8n_hub_configs'),
+              },
+            ]
+          : []),
         {
           name: 'Settings Hub Global Vars',
           label: t('SIDEBAR.HUB_GLOBAL_VARS'),
@@ -807,6 +813,12 @@ const menuItems = computed(() => {
           label: t('SIDEBAR.SPOKE_CONFIGS'),
           icon: 'i-lucide-network',
           to: accountScopedRoute('n8n_spoke_configs'),
+        },
+        {
+          name: 'Settings RAG',
+          label: t('SIDEBAR.RAG'),
+          icon: 'i-lucide-database',
+          to: accountScopedRoute('n8n_rag'),
         },
         // {
         //   name: 'Settings Captain',

@@ -84,6 +84,7 @@ class Inbox < ApplicationRecord
   after_destroy :delete_round_robin_agents
 
   after_create_commit :dispatch_create_event
+  after_create_commit :provision_n8n_bot
   after_update_commit :dispatch_update_event
   after_destroy_commit :invalidate_filtered_unread_counts_after_destroy
 
@@ -239,6 +240,10 @@ class Inbox < ApplicationRecord
 
   def display_name_from_email
     channel.email.split('@').first.parameterize.titleize
+  end
+
+  def provision_n8n_bot
+    N8n::ProvisionAccountJob.perform_later(account, self)
   end
 
   def dispatch_create_event

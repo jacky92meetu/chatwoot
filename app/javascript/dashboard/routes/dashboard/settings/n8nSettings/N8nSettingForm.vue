@@ -40,6 +40,7 @@ const initialValue = field => {
     if (field.type === 'boolean') {
       return value ?? field.defaultValue ?? false;
     }
+    if (field.type === 'lines') return (value || []).join('\n');
     return value ?? '';
   }
 
@@ -100,6 +101,24 @@ const parseField = field => {
     return { valid: false };
   }
 
+  if (field.type === 'lines') {
+    const lines = String(value)
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean);
+    return { valid: true, value: lines };
+  }
+
+  if (field.type === 'number') {
+    if (String(value).trim() === '') return { valid: true, value: null };
+    const number = Number(value);
+    if (!Number.isInteger(number) || number < 1) {
+      errors[field.key] = t('N8N_SETTINGS.VALIDATION.POSITIVE_NUMBER');
+      return { valid: false };
+    }
+    return { valid: true, value: number };
+  }
+
   return { valid: true, value };
 };
 
@@ -119,7 +138,7 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="flex flex-col max-h-[90vh]">
+  <div class="flex flex-col w-full max-h-full">
     <woot-modal-header
       :header-title="
         t(
@@ -132,12 +151,13 @@ const submit = () => {
     />
 
     <form
-      class="flex flex-col gap-5 px-8 pb-6 overflow-y-auto"
+      class="flex flex-col w-full gap-5 px-8 pb-6 overflow-y-auto"
       @submit.prevent="submit"
     >
       <template v-for="field in resourceConfig.fields" :key="field.key">
         <Input
-          v-if="field.type === 'text'"
+          v-if="field.type === 'text' || field.type === 'number'"
+          :type="field.type === 'number' ? 'number' : 'text'"
           v-model="form[field.key]"
           :label="t(field.label)"
           :message="errors[field.key] || (field.hint ? t(field.hint) : '')"
@@ -160,7 +180,11 @@ const submit = () => {
         </div>
 
         <TextArea
-          v-else-if="field.type === 'textarea' || field.type.startsWith('json')"
+          v-else-if="
+            field.type === 'textarea' ||
+            field.type === 'lines' ||
+            field.type.startsWith('json')
+          "
           v-model="form[field.key]"
           :label="t(field.label)"
           :message="errors[field.key] || (field.hint ? t(field.hint) : '')"

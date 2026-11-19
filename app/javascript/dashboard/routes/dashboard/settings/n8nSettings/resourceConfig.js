@@ -1,6 +1,7 @@
 import {
   n8nHubConfigsAPI,
   n8nHubGlobalVarsAPI,
+  n8nRagSourcesAPI,
   n8nSpokeConfigsAPI,
 } from 'dashboard/api/n8nSettings';
 
@@ -211,6 +212,60 @@ export const RESOURCE_CONFIGS = {
       activeField,
     ],
   },
+};
+
+RESOURCE_CONFIGS.ragSources = {
+  api: n8nRagSourcesAPI,
+  paramKey: 'n8n_rag_source',
+  panel: 'rag',
+  title: 'N8N_SETTINGS.RAG.TITLE',
+  description: 'N8N_SETTINGS.RAG.DESCRIPTION',
+  singular: 'N8N_SETTINGS.RAG.SINGULAR',
+  columns: [
+    { key: 'name', label: 'N8N_SETTINGS.FIELDS.NAME' },
+    { key: 'url', label: 'N8N_SETTINGS.RAG.URL', type: 'text' },
+    { key: 'max_pages', label: 'N8N_SETTINGS.RAG.MAX_PAGES' },
+    { key: 'enabled', label: 'N8N_SETTINGS.FIELDS.STATUS', type: 'boolean' },
+  ],
+  fields: [
+    {
+      key: 'name',
+      type: 'text',
+      label: 'N8N_SETTINGS.FIELDS.NAME',
+      required: true,
+    },
+    {
+      key: 'url',
+      type: 'text',
+      label: 'N8N_SETTINGS.RAG.URL',
+      hint: 'N8N_SETTINGS.RAG.URL_HINT',
+      required: true,
+    },
+    {
+      key: 'max_pages',
+      type: 'number',
+      label: 'N8N_SETTINGS.RAG.MAX_PAGES',
+      hint: 'N8N_SETTINGS.RAG.MAX_PAGES_HINT',
+    },
+    {
+      key: 'exclude',
+      type: 'lines',
+      label: 'N8N_SETTINGS.RAG.EXCLUDE',
+      hint: 'N8N_SETTINGS.RAG.EXCLUDE_HINT',
+    },
+    {
+      key: 'selector',
+      type: 'text',
+      label: 'N8N_SETTINGS.RAG.SELECTOR',
+      hint: 'N8N_SETTINGS.RAG.SELECTOR_HINT',
+    },
+    {
+      key: 'enabled',
+      type: 'boolean',
+      label: 'N8N_SETTINGS.RAG.ENABLED',
+      defaultValue: true,
+    },
+  ],
 };
 
 export const serializeJson = value => JSON.stringify(value, null, 2);

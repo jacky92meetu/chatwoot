@@ -329,6 +329,8 @@ Rails.application.routes.draw do
           resources :labels, only: [:index, :show, :create, :update, :destroy]
           resources :n8n_hub_configs, only: [:index, :show, :create, :update, :destroy]
           resources :n8n_hub_global_vars, only: [:index, :show, :create, :update, :destroy]
+          resources :n8n_rag_sources, only: [:index, :create, :update, :destroy]
+          resources :n8n_rag_runs, only: [:index, :create]
           resources :n8n_spoke_configs, only: [:index, :show, :create, :update, :destroy]
 
           resources :notifications, only: [:index, :update, :destroy] do
@@ -740,6 +742,7 @@ Rails.application.routes.draw do
       resources :accounts, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         post :seed, on: :member
         post :reset_cache, on: :member
+        post :provision_n8n, on: :member
       end
       resources :users, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
         delete :avatar, on: :member, action: :destroy_avatar

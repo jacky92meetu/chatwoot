@@ -350,7 +350,8 @@
     "ACCOUNT_SETTINGS": "Account Settings",
     "HUB_CONFIGS": "Hub Configs",
     "HUB_GLOBAL_VARS": "Hub Global Vars",
-    "SPOKE_CONFIGS": "Spoke Configs",
+    "SPOKE_CONFIGS": "Hub Spoke/APIs",
+    "RAG": "Knowledge Base (RAG)",
     "APPLICATIONS": "Applications",
     "LABELS": "Labels",
     "CUSTOM_ATTRIBUTES": "Custom Attributes",
@@ -432,9 +433,41 @@
       "SINGULAR": "global variable"
     },
     "SPOKE_CONFIGS": {
-      "TITLE": "Spoke Configs",
+      "TITLE": "Hub Spoke/APIs",
       "DESCRIPTION": "Manage account-specific API spokes, templates, parameters, and AI instructions.",
-      "SINGULAR": "spoke config"
+      "SINGULAR": "spoke/API"
+    },
+    "RAG": {
+      "TITLE": "Knowledge Base (RAG)",
+      "DESCRIPTION": "Manage the websites the AI reads to answer questions, then re-index them to refresh the knowledge base.",
+      "SINGULAR": "source",
+      "URL": "Website URL",
+      "URL_HINT": "Public http(s) address where crawling starts. Internal addresses are not allowed.",
+      "MAX_PAGES": "Max pages",
+      "MAX_PAGES_HINT": "Maximum number of pages to index from this source.",
+      "EXCLUDE": "Excluded paths",
+      "EXCLUDE_HINT": "One path prefix per line, for example /blog",
+      "SELECTOR": "Content selector",
+      "SELECTOR_HINT": "Optional CSS selector for the main content.",
+      "ENABLED": "Enabled",
+      "PANEL": {
+        "INDEX_STATUS": "Index status",
+        "CHUNKS": "Chunks",
+        "PAGES": "Pages",
+        "START": "Start indexing",
+        "RUNNING": "Indexing in progress...",
+        "NEEDS_SOURCE": "Add and enable at least one source first.",
+        "STARTED": "Indexing started.",
+        "HISTORY": "Recent runs",
+        "NO_RUNS": "No indexing runs yet.",
+        "SUCCESS": "Completed",
+        "FAILED": "Failed",
+        "RUNNING_STATUS": "Running",
+        "RESULT": "{pages} pages, {chunks} chunks in {seconds}s",
+        "ADDED": "{count} pages added",
+        "REMOVED": "{count} pages removed",
+        "MODELS": "Embedding model: {model}"
+      }
     },
     "FIELDS": {
       "NAME": "Name",
@@ -474,7 +507,8 @@
       "REQUIRED": "This field is required.",
       "JSON": "Enter valid JSON.",
       "JSON_OBJECT": "Enter a JSON object.",
-      "NON_NULL_JSON": "The JSON value cannot be null."
+      "NON_NULL_JSON": "The JSON value cannot be null.",
+      "POSITIVE_NUMBER": "Enter a whole number of 1 or more."
     },
     "API": {
       "CREATE_SUCCESS": "Configuration created successfully.",
