@@ -36,8 +36,13 @@ export const RESOURCE_CONFIGS = {
       { key: 'name', label: 'N8N_SETTINGS.FIELDS.NAME' },
       { key: 'config_type', label: 'N8N_SETTINGS.FIELDS.CONFIG_TYPE' },
       {
+        key: 'description',
+        label: 'N8N_SETTINGS.FIELDS.DESCRIPTION',
+        type: 'text',
+      },
+      {
         key: 'effective_value',
-        label: 'N8N_SETTINGS.FIELDS.EFFECTIVE_VALUE',
+        label: 'N8N_SETTINGS.FIELDS.VALUE',
         type: 'effectiveJson',
       },
       {
@@ -92,14 +97,14 @@ export const RESOURCE_CONFIGS = {
     columns: [
       { key: 'name', label: 'N8N_SETTINGS.FIELDS.NAME' },
       {
+        key: 'description',
+        label: 'N8N_SETTINGS.FIELDS.DESCRIPTION',
+        type: 'text',
+      },
+      {
         key: 'value',
         label: 'N8N_SETTINGS.FIELDS.VALUE',
         type: 'secretJson',
-      },
-      {
-        key: 'is_secret',
-        label: 'N8N_SETTINGS.FIELDS.SECRET',
-        type: 'boolean',
       },
       {
         key: 'is_active',
@@ -145,6 +150,11 @@ export const RESOURCE_CONFIGS = {
     singular: 'N8N_SETTINGS.SPOKE_CONFIGS.SINGULAR',
     columns: [
       { key: 'name', label: 'N8N_SETTINGS.FIELDS.NAME' },
+      {
+        key: 'description',
+        label: 'N8N_SETTINGS.FIELDS.DESCRIPTION',
+        type: 'text',
+      },
       {
         key: 'api_template',
         label: 'N8N_SETTINGS.FIELDS.API_TEMPLATE',
@@ -225,6 +235,11 @@ RESOURCE_CONFIGS.ragSources = {
     { key: 'name', label: 'N8N_SETTINGS.FIELDS.NAME' },
     { key: 'url', label: 'N8N_SETTINGS.RAG.URL', type: 'text' },
     { key: 'max_pages', label: 'N8N_SETTINGS.RAG.MAX_PAGES' },
+    {
+      key: 'pages',
+      label: 'N8N_SETTINGS.FIELDS.INDEXED_PAGES',
+      type: 'number',
+    },
     { key: 'enabled', label: 'N8N_SETTINGS.FIELDS.STATUS', type: 'boolean' },
   ],
   fields: [
@@ -269,9 +284,3 @@ RESOURCE_CONFIGS.ragSources = {
 };
 
 export const serializeJson = value => JSON.stringify(value, null, 2);
-
-export const truncateValue = (value, maxLength = 120) => {
-  const text = typeof value === 'string' ? value : JSON.stringify(value);
-  if (!text) return '—';
-  return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
-};

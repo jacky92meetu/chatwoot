@@ -15,7 +15,6 @@ const POLL_MS = 5000;
 
 const runs = ref([]);
 const stats = ref({ chunks: 0, pages: 0, sites: [] });
-const engine = ref({});
 const isRunning = ref(false);
 const isStarting = ref(false);
 let timer = null;
@@ -38,7 +37,6 @@ const load = async () => {
     const { data } = await n8nRagRunsAPI.get();
     runs.value = data.runs;
     stats.value = data.stats;
-    engine.value = data.engine || {};
     isRunning.value = data.running;
   } catch (error) {
     useAlert(errorMessage(error));
@@ -103,15 +101,6 @@ onBeforeUnmount(stopPolling);
           </p>
           <p class="mb-0 text-xl font-medium text-n-slate-12">
             {{ stats.chunks }}
-          </p>
-        </div>
-        <div v-if="engine.embeddingModel">
-          <p class="mb-0 text-xs text-n-slate-11">
-            {{
-              t('N8N_SETTINGS.RAG.PANEL.MODELS', {
-                model: engine.embeddingModel,
-              })
-            }}
           </p>
         </div>
       </div>

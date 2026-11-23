@@ -110,6 +110,47 @@ RSpec.describe 'n8n settings APIs', type: :request do
     end
   end
 
+  describe 'rag sources' do
+    let!(:source) do
+      N8nHubConfig.create!(
+        account: account,
+        config_type: 'rag_site',
+        name: 'main_site',
+        default_value: { 'type' => 'rag_site', 'url' => 'https://example.test', 'enabled' => true },
+        is_active: true
+      )
+    end
+
+    it 'reports the page count from the latest successful run' do
+      N8nRagRun.create!(
+        account: account,
+        status: 'success',
+        started_at: 1.hour.ago,
+        finished_at: 1.hour.ago,
+        pages: 7,
+        chunks: 21,
+        per_site: { 'https://example.test' => { 'pages' => 7, 'chunks' => 21 } }
+      )
+
+      get "/api/v1/accounts/#{account.id}/n8n_rag_sources", headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to contain_exactly(
+        include('id' => source.id, 'name' => 'main_site', 'pages' => 7)
+      )
+      expect(response.parsed_body.first).not_to have_key('chunks')
+    end
+
+    it 'reports zero pages before any successful run' do
+      get "/api/v1/accounts/#{account.id}/n8n_rag_sources", headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to contain_exactly(
+        include('id' => source.id, 'name' => 'main_site', 'pages' => 0)
+      )
+    end
+  end
+
   describe 'spoke configs' do
     let(:payload) do
       {

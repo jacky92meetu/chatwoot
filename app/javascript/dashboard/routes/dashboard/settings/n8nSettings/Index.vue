@@ -15,7 +15,7 @@ import {
 } from 'dashboard/components-next/table';
 import N8nSettingForm from './N8nSettingForm.vue';
 import RagIndexPanel from './RagIndexPanel.vue';
-import { RESOURCE_CONFIGS, truncateValue } from './resourceConfig';
+import { RESOURCE_CONFIGS } from './resourceConfig';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -123,16 +123,22 @@ const deleteRecord = async () => {
   }
 };
 
+const formatJson = value => {
+  if (value === null || value === undefined) return '—';
+  if (typeof value !== 'object') return String(value);
+  return JSON.stringify(value, null, 2);
+};
+
 const displayValue = (record, column) => {
   if (column.type === 'effectiveJson') {
-    return truncateValue(record.value ?? record.default_value);
+    return formatJson(record.value ?? record.default_value);
   }
   if (column.type === 'secretJson' && record.is_secret) {
     return '••••••••';
   }
-  if (column.type === 'json') return truncateValue(record[column.key]);
-  if (column.type === 'text') return truncateValue(record[column.key]);
-  return record[column.key] || '—';
+  if (column.type === 'json') return formatJson(record[column.key]);
+  if (column.type === 'text') return record[column.key] || '—';
+  return record[column.key] ?? '—';
 };
 
 const booleanLabel = (record, column) => {
@@ -198,6 +204,7 @@ onMounted(fetchRecords);
             <BaseTableCell
               v-for="column in resourceConfig.columns"
               :key="column.key"
+              class="align-top"
             >
               <span
                 v-if="column.type === 'boolean'"
@@ -216,16 +223,19 @@ onMounted(fetchRecords);
                   column.type === 'effectiveJson' ||
                   column.type === 'secretJson'
                 "
-                class="text-xs break-all text-n-slate-11"
+                class="block text-xs whitespace-pre-wrap [overflow-wrap:anywhere] text-n-slate-11"
               >
                 {{ displayValue(record, column) }}
               </code>
-              <span v-else class="text-sm break-all text-n-slate-12">
+              <span
+                v-else
+                class="block text-sm whitespace-pre-wrap [overflow-wrap:anywhere] text-n-slate-12"
+              >
                 {{ displayValue(record, column) }}
               </span>
             </BaseTableCell>
 
-            <BaseTableCell align="end">
+            <BaseTableCell align="end" class="align-top">
               <div class="flex justify-end gap-2">
                 <Button
                   v-tooltip.top="t('N8N_SETTINGS.EDIT')"

@@ -465,8 +465,7 @@
         "RUNNING_STATUS": "Running",
         "RESULT": "{pages} pages, {chunks} chunks in {seconds}s",
         "ADDED": "{count} pages added",
-        "REMOVED": "{count} pages removed",
-        "MODELS": "Embedding model: {model}"
+        "REMOVED": "{count} pages removed"
       }
     },
     "FIELDS": {
@@ -481,12 +480,13 @@
       "IS_ACTIVE": "Active",
       "STATUS": "Status",
       "PARAMETERS": "Parameters",
+      "INDEXED_PAGES": "Indexed pages",
       "API_TEMPLATE": "API template",
       "RESPONSE_TEMPLATE": "Response template",
       "OUTPUT_TEMPLATE": "Output template",
       "AI_DATA_REQUEST_INSTRUCTION": "AI data request instruction",
       "AI_OUTPUT_INSTRUCTION": "AI output instruction",
-      "ACTIONS": "Actions"
+      "ACTIONS": "Action"
     },
     "HINTS": {
       "OPTIONAL_OBJECT": "Optional JSON object. Leave blank to use the default value.",
