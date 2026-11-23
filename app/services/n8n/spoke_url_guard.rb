@@ -12,6 +12,10 @@ class N8n::SpokeUrlGuard
   ].map { |range| IPAddr.new(range) }.freeze
   VALUE_FLAGS = %w[-X --request -H --header -d --data --data-raw --data-binary].freeze
 
+  # Hub-config setting (config_type=setting) that holds the spoke host allowlist.
+  # Managed from Chatwoot -> Settings -> n8n -> Hub configs.
+  ALLOWED_HOSTS_SETTING = 'spokeAllowedHosts'.freeze
+
   def self.allowed?(url, account_id:, use_allowlist: true)
     new(account_id, use_allowlist: use_allowlist).allowed?(url)
   end
@@ -73,8 +77,21 @@ class N8n::SpokeUrlGuard
     @global_vars ||= N8nHubGlobalVar.where(account_id: @account_id, is_active: true).pluck(:name, :value).to_h
   end
 
+  # Reads the allowlist from n8n_hub_configs (config_type=setting, name=spokeAllowedHosts).
+  # Accepts a JSON array or a comma-separated string; the Hub Router resolves it the same way.
   def allowed_hosts
-    @allowed_hosts ||= Array(N8nTenantRoute.find_by(account_id: @account_id)&.spoke_allowed_hosts).map(&:downcase)
+    @allowed_hosts ||= begin
+      raw = N8nHubConfig
+            .where(account_id: @account_id, config_type: 'setting', name: ALLOWED_HOSTS_SETTING, is_active: true)
+            .pick(Arel.sql('COALESCE(value, default_value)'))
+      value = raw.is_a?(Hash) ? raw['value'] : nil
+      hosts = case value
+              when Array then value
+              when String then value.split(',')
+              else []
+              end
+      hosts.map { |host| host.to_s.strip.downcase }.reject(&:empty?)
+    end
   end
 
   def literal_or_internal_name?(host)
